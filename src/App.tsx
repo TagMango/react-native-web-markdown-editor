@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { convertToRaw, EditorState } from "draft-js";
+import { convertToRaw, EditorState, convertFromRaw } from "draft-js";
 // @ts-ignore
 import draftToMarkdown from "draftjs-to-markdown";
+import { markdownToDraft } from "markdown-draft-js";
 import anchorme from "anchorme";
 import "./App.css";
 
@@ -57,6 +58,15 @@ const App: React.FC = () => {
   useEffect(() => {
     window.ReactNativeWebView?.postMessage(aboutYou);
   }, [aboutYou]);
+  useEffect(() => {
+    const value =
+      new URLSearchParams(window.location.search).get("value") || "";
+    setAboutYou(value);
+    const rawData = markdownToDraft(value);
+    const contentState = convertFromRaw(rawData);
+    const newEditorState = EditorState.createWithContent(contentState);
+    setEditorState(newEditorState);
+  }, []);
   return (
     <div className="App">
       <Editor
