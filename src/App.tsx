@@ -67,6 +67,7 @@ const App: React.FC = () => {
       <Editor
         editorState={editorState}
         toolbar={toolbarMango}
+        toolbarHidden
         placeholder="Add description"
         toolbarClassName="toolbarClassName"
         wrapperClassName="emailBodyEditorWrapper"
