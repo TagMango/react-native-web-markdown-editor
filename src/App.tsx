@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { convertToRaw, EditorState, convertFromRaw } from "draft-js";
-// @ts-ignore
-import draftToMarkdown from "draftjs-to-markdown";
-import { markdownToDraft } from "markdown-draft-js";
+import { EditorState, ContentState } from "draft-js";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 import anchorme from "anchorme";
 import "./App.css";
 
@@ -31,16 +30,6 @@ const toolbarMango = {
     dropdownClassName: "toolbarDropdown",
   },
 };
-const hashConfig = {
-  trigger: "#",
-  separator: " ",
-};
-const config = {
-  blockTypesMapping: {
-    "unordered-list-item": "* ",
-  },
-  emptyLineBeforeBlock: true,
-};
 
 const App: React.FC = () => {
   const [aboutYou, setAboutYou] = useState("");
@@ -48,22 +37,28 @@ const App: React.FC = () => {
   const onEditorStateChange = (state: EditorState) => {
     setEditorState(state);
   };
-  const onContentStateChange = () => {
-    const rawContentState = convertToRaw(editorState.getCurrentContent());
-    const markup = draftToMarkdown(rawContentState, hashConfig, config);
-    if (markup) {
-      setAboutYou(anchorme(markup));
+  const onContentStateChange = (contentState: any) => {
+    const content = draftToHtml(contentState);
+    if (content) {
+      setAboutYou(anchorme(content));
     }
   };
   useEffect(() => {
+    console.log(aboutYou);
     window.ReactNativeWebView?.postMessage(aboutYou);
   }, [aboutYou]);
   useEffect(() => {
+    const styledValue =
+      new URLSearchParams(window.location.search).get("styledValue") || "";
     const value =
       new URLSearchParams(window.location.search).get("value") || "";
     setAboutYou(value);
-    const rawData = markdownToDraft(value);
-    const contentState = convertFromRaw(rawData);
+    const blocksFromHtml = htmlToDraft(styledValue || value);
+    const { contentBlocks, entityMap } = blocksFromHtml;
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks,
+      entityMap
+    );
     const newEditorState = EditorState.createWithContent(contentState);
     setEditorState(newEditorState);
   }, []);

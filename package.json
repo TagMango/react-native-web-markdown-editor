@@ -12,8 +12,8 @@
     "@types/react-dom": "^17.0.11",
     "anchorme": "^2.1.2",
     "draft-js": "^0.11.7",
-    "draftjs-to-markdown": "^0.6.0",
-    "markdown-draft-js": "^2.4.0",
+    "draftjs-to-html": "^0.9.1",
+    "html-to-draftjs": "^1.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-draft-wysiwyg": "^1.14.7",
@@ -46,6 +46,8 @@
     ]
   },
   "devDependencies": {
+    "@types/draftjs-to-html": "^0.8.1",
+    "@types/html-to-draftjs": "^1.4.0",
     "@types/markdown-draft-js": "^2.2.4",
     "@types/react-draft-wysiwyg": "^1.13.4"
   }
